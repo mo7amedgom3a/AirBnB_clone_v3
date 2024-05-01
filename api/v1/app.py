@@ -1,27 +1,33 @@
+
 #!/usr/bin/python3
-from flask import Flask
+"""
+This module contains the principal application
+"""
 from models import storage
 from api.v1.views import app_views
+from flask import Flask, make_response, jsonify
 from os import getenv
 
 
 app = Flask(__name__)
-
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 app.register_blueprint(app_views)
 
 
 @app.teardown_appcontext
-def close_storage(exception):
-    """Close storage"""
+def close_db(obj):
+    """ calls methods close() """
     storage.close()
 
 
 @app.errorhandler(404)
-def page_not_found(e):
-    """404 error"""
-    return {"error": "Not found"}, 404
+def page_not_foun(error):
+    """ Loads a custom 404 page not found """
+    return make_response(jsonify({"error": "Not found"}), 404)
+
 
 if __name__ == "__main__":
+
     host = getenv('HBNB_API_HOST', default='0.0.0.0')
     port = getenv('HBNB_API_PORT', default=5000)
 
