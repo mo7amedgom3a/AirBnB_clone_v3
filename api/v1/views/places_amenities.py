@@ -8,21 +8,22 @@ from models.amenity import Amenity
 from models.place import Place
 
 
-@app_views.route('/places/<string:place_id>/amenities', methods=['GET'],
-                 strict_slashes=False)
-def get_amenities(place_id):
-    """ retrieves all amenities from a place """
+@app_views.route('/places/<string:place_id>/amenities/<string:amenity_id>',
+                 methods=['DELETE'], strict_slashes=False)
+def get_amenities2(place_id):
+    """get amenities of a place"""
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
-    amenities = [obj.to_dict() for obj in place.amenities]
+    amenities = [amenity.to_dict() for amenity in place.amenities]
     return jsonify(amenities)
 
 
 @app_views.route('/places/<string:place_id>/amenities/<string:amenity_id>',
-                 methods=['DELETE'], strict_slashes=False)
-def delete_amenity(place_id, amenity_id):
-    """ delete amenity from place """
+                 methods=['DELETE'],
+                 strict_slashes=False)
+def delete_amenity2(place_id, amenity_id):
+    """delete an amenity"""
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
@@ -33,13 +34,13 @@ def delete_amenity(place_id, amenity_id):
         abort(404)
     place.amenities.remove(amenity)
     storage.save()
-    return jsonify({})
+    return jsonify({}), 200
 
 
 @app_views.route('/places/<string:place_id>/amenities/<string:amenity_id>',
                  methods=['POST'], strict_slashes=False)
 def post_amenity2(place_id, amenity_id):
-    """ post amenity by id """
+    """create an amenity"""
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
@@ -47,7 +48,7 @@ def post_amenity2(place_id, amenity_id):
     if amenity is None:
         abort(404)
     if amenity in place.amenities:
-        return (jsonify(amenity.to_dict()), 200)
-    place.amenities.append(obj)
+        return jsonify(amenity.to_dict()), 200
+    place.amenities.append(amenity)
     storage.save()
-    return (jsonify(amenity.to_dict(), 201))
+    return jsonify(amenity.to_dict()), 201
