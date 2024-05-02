@@ -56,7 +56,7 @@ def post_amenity2(place_id, amenity_id):
 
 @app_views.route('/places/<string:place_id>/amenities', methods=['GET'],
                  strict_slashes=False)
-def get_amenities(place_id):
+def get_amenities_2(place_id):
     """get amenities of a place"""
     place = storage.get(Place, place_id)
     if place is None:
